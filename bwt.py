@@ -2,15 +2,14 @@
 import string
 import sys
 
+from collections import Counter
+
+CHARACTER_SET = '$' + string.uppercase + string.lowercase  # order matters
+
 
 def read_file(file_name):
     # Open file
     f = open(file_name, 'r')
-
-    ## Ignore first line and strip newline character
-    #for i, line in enumerate(f):
-    #    if i > 0:
-    #        text += line[:-1]
 
     text = ''
     sequences = []
@@ -93,6 +92,34 @@ def ibwt(bwt_text):
     """
     # TODO(anthonysutardja): I got dibs on this
     pass
+
+
+def sort_characters(text):
+    """
+    Sorts the characters with counting sort to preserve O(n) runtime.
+
+    Args:
+    text    - the string we wish to sort
+
+    Returns:
+    A string with the characters sorted in lexicographical order.
+
+    >>> sort_characters('anthony')
+    'ahnnoty'
+    >>> sort_characters('kevin')
+    'eiknv'
+    >>> sort_characters('aAaAaa')
+    'AAaaaa'
+    """
+    counts = Counter()
+    for ch in text:
+        counts[ch] += 1
+
+    sorted_text = ''
+    for ch in CHARACTER_SET:
+        sorted_text += ''.join([ch for i in range(counts[ch])])
+
+    return sorted_text
 
 
 def main():

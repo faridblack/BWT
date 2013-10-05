@@ -84,6 +84,14 @@ def bwt(original_text, suffix_array):
 
 
 def ibwt(bwt_text):
+    """
+    Args:
+    bwt_text - the BWT string no newline characters
+
+    Returns:
+    The decoded string.
+    """
+    # TODO(anthonysutardja): I got dibs on this
     pass
 
 

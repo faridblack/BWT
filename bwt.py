@@ -67,11 +67,23 @@ def k_s(text):
     print len(r_1_2), len(sorted_array)
 
 
-def bwt(suffix_array):
-    pass
+def bwt(original_text, suffix_array):
+    """
+    Args:
+    original_text  - original string with no newline characters
+    suffix_array   - an array of suffix indices listed in lexicographical order
+                     assuming the suffixes are indexed starting at ZERO
+
+    Returns:
+    An unformatted string that is the corresponding BWT of the suffix array.
+    """
+    bwt_str = ''
+    for suffix_index in suffix_array:
+        bwt_str += original_text[suffix_index - 1]
+    return bwt_str
 
 
-def ibwt(text):
+def ibwt(bwt_text):
     pass
 
 

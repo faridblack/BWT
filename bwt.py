@@ -1,16 +1,30 @@
+#!/usr/bin/env python
 import string
 import sys
+
 
 def read_file(file_name):
     # Open file
     f = open(file_name, 'r')
-    text = ''
 
-    # Ignore first line and strip newline character
-    for i,line in enumerate(f):
-        if i > 0:
-            text += line[:-1]
-    return text
+    ## Ignore first line and strip newline character
+    #for i, line in enumerate(f):
+    #    if i > 0:
+    #        text += line[:-1]
+
+    text = ''
+    sequences = []
+
+    for line in f.readlines():
+        line = line.rstrip()
+        if line[0] == ">":
+            sequences.append(text)
+            text = ''
+        else:
+            text += line
+    sequences.append(text)
+    return sequences
+
 
 def radix_sort(strings, pos):
     # Base Case for radix sort
@@ -30,32 +44,36 @@ def radix_sort(strings, pos):
 
     # Recursively sort each bucket
     for character in '$' + string.ascii_lowercase + string.ascii_uppercase:
-        final_sorted += radix_sort(sorted_strings[character],pos+1)
+        final_sorted += radix_sort(sorted_strings[character], pos + 1)
 
     return final_sorted
 
+
 def k_s(text):
     # Create r_0 and r_1_2, append '$$$'
-    r_0,r_1_2 = [],[]
+    r_0, r_1_2 = [], []
     text += '$$$'
 
     # Fill r_0 and r_1_2
-    for i in range(len(text)-3):
+    for i in range(len(text) - 3):
         if i % 3 == 0:
-            r_0.append(text[i] + text[i+1] + text[i+2])
+            r_0.append(text[i] + text[i + 1] + text[i + 2])
         else:
-            r_1_2.append(text[i] + text[i+1] + text[i+2])
+            r_1_2.append(text[i] + text[i + 1] + text[i + 2])
 
     # Sort r_1_2
-    sorted_array = radix_sort(r_1_2,0)
+    sorted_array = radix_sort(r_1_2, 0)
     print sorted_array
     print len(r_1_2), len(sorted_array)
 
-def bwt():
+
+def bwt(suffix_array):
     pass
 
-def ibwt():
+
+def ibwt(text):
     pass
+
 
 def main():
     if len(sys.argv) < 4:
@@ -65,7 +83,10 @@ def main():
     output_file = sys.argv[3]
 
     # Read Text File
-    text = read_file(input_file)
+    sequences = read_file(input_file)
+
+    # Assuming there is at least 1 sequence in FASTA file
+    text = sequences[0]
 
     # Run K-S Algorithm to generate suffix array
     suffix_array = k_s(text)

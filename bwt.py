@@ -93,7 +93,7 @@ def ibwt(bwt_text):
     The decoded string.
 
     >>> ibwt("arbbr$aa")
-    'barbara'
+    'barbara$'
     """
     first_column = sort_characters(bwt_text)
     M = first_occurrence_factory(first_column)

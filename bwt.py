@@ -84,14 +84,33 @@ def bwt(original_text, suffix_array):
 
 def ibwt(bwt_text):
     """
+    Finds the inverse BWT of a BWT-encoded string with forward mapping.
+
     Args:
     bwt_text - the BWT string no newline characters
 
     Returns:
     The decoded string.
+
+    >>> ibwt("arbbr$aa")
+    'barbara'
     """
-    # TODO(anthonysutardja): I got dibs on this
-    pass
+    first_column = sort_characters(bwt_text)
+    M = first_occurrence_factory(first_column)
+    N = last_occurrence_list_factory(bwt_text)
+    original_str = ''
+
+    idx = 0
+    # find the row where the $ sign is in the last column
+    while bwt_text[idx] != '$':
+        idx += 1
+
+    while first_column[idx] != '$':
+        original_str += first_column[idx]
+        number_of_ch = idx - M[first_column[idx]] + 1
+        idx = N[first_column[idx]][number_of_ch - 1]
+    original_str += first_column[idx]
+    return original_str
 
 
 def sort_characters(text):
@@ -120,6 +139,39 @@ def sort_characters(text):
         sorted_text += ''.join([ch for i in range(counts[ch])])
 
     return sorted_text
+
+
+def last_occurrence_list_factory(last_column):
+    """
+    Args:
+    last_column  - A string that is the BWT
+
+    Returns:
+    A dictionary where a character is the key to a list of positions in which
+    that character occurs in the last column.
+    """
+    N = dict()
+    for idx, ch in enumerate(last_column):
+        if ch not in N:
+            N[ch] = []
+        N[ch].append(idx)
+    return N
+
+
+def first_occurrence_factory(first_column):
+    """
+    Args:
+    first_column    - A string containing the first column of the BWT matrix
+
+    Returns:
+    A dictionary where a character is the key to the first position in
+    first_column where that character appears.
+    """
+    M = dict()
+    for idx, ch in enumerate(first_column):
+        if ch not in M:
+            M[ch] = idx
+    return M
 
 
 def main():

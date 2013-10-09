@@ -24,6 +24,15 @@ def read_file(file_name):
     sequences.append(text)
     return sequences
 
+def has_duplicates(strings):
+    previous_string = None
+
+    for string in strings:
+        if string == previous_string:
+            return True
+        previous_string = string
+
+    return False
 
 def radix_sort(strings, pos):
     # Base Case for radix sort
@@ -34,7 +43,7 @@ def radix_sort(strings, pos):
 
     # Create a bucket for each character, in lexicographical order
     sorted_strings = {}
-    for character in '$' + string.ascii_lowercase + string.ascii_uppercase:
+    for character in CHARACTER_SET:
         sorted_strings[character] = []
 
     #Place string in correct bucket
@@ -42,29 +51,138 @@ def radix_sort(strings, pos):
         sorted_strings[s[pos]].append(s)
 
     # Recursively sort each bucket
-    for character in '$' + string.ascii_lowercase + string.ascii_uppercase:
+    for character in CHARACTER_SET:
         final_sorted += radix_sort(sorted_strings[character], pos + 1)
 
     return final_sorted
 
+def integer_radix_sort(integers, pos):
+    final_sorted = []
+
+    if pos == 3:
+        return integers
+
+    sorted_values = {}
+    for i in range(10):
+        sorted_values[i] = []
+
+    for integer in integers:
+        sorted_values[(integer/(10**(2-pos)))%10].append(integer)
+
+    for i in range(10):
+        final_sorted += integer_radix_sort(sorted_values[i], pos + 1)
+
+    return final_sorted
+
+def list_radix_sort(lists, pos, max_value):
+    final_sorted = []
+
+    if pos == 3:
+        return lists
+
+    sorted_values = {}
+    for i in range(max_value + 1):
+        sorted_values[i] = []
+
+    for value in lists:
+        sorted_values[value[pos]].append(value)
+
+    for i in range(max_value + 1):
+        final_sorted += list_radix_sort(sorted_values[i], pos + 1, max_value)
+
+    return final_sorted
+
+def create_new_labels(sorted_array):
+    current_value = 0
+    current_string = None
+    labels = {}
+    for string in sorted_array:
+        if string == current_string:
+            labels[string] = current_value
+        else:
+            current_string = string
+            current_value = current_value + 1
+            labels[string] = current_value
+    return labels
+
+def character_to_integer(character):
+    if type(character) is int:
+        return character
+    if character is '$':
+        return 0
+    if character >= 'A' and character <= 'Z':
+        return ord(character) - 64
+    return ord(character) - 70
 
 def k_s(text):
-    # Create r_0 and r_1_2, append '$$$'
-    r_0, r_1_2 = [], []
+    # Create r_0, r_1, r_2, append '$$$'
+    r_0, r_1, r_2 = [], [], []
     text += '$$$'
+    positions = {}
 
-    # Fill r_0 and r_1_2
+
     for i in range(len(text) - 3):
         if i % 3 == 0:
-            r_0.append(text[i] + text[i + 1] + text[i + 2])
+            r_0.append([character_to_integer(text[i]), character_to_integer(text[i + 1]), character_to_integer(text[i + 2]), i])
+        elif i % 3 == 1:
+            r_1.append([character_to_integer(text[i]), character_to_integer(text[i + 1]), character_to_integer(text[i + 2]), i])
         else:
-            r_1_2.append(text[i] + text[i + 1] + text[i + 2])
+            r_2.append([character_to_integer(text[i]), character_to_integer(text[i + 1]), character_to_integer(text[i + 2]), i])
+    r = r_1 + r_2
 
-    # Sort r_1_2
-    sorted_array = radix_sort(r_1_2, 0)
-    print sorted_array
-    print len(r_1_2), len(sorted_array)
+    r_0 = list_radix_sort(r_0, 0, len(CHARACTER_SET))
+    r = list_radix_sort(r, 0, len(CHARACTER_SET))
 
+    for i in range(len(r)):
+        positions[r[i][3]] = i
+
+    sorted_array = []
+    i,j = 0,0 # Positions in r_0, r
+    while i < len(r_0) and j < len(r):
+        '''
+        Check which character is larger
+        If same, check the next character
+        If same, check positions in r (if both % 3 > 0)
+        Otherwise, check next positions in r
+        '''
+        if character_to_integer(text[r_0[i][3]]) > character_to_integer(text[r[j][3]]):
+            sorted_array.append(r[j][3])
+            j += 1
+        elif character_to_integer(text[r_0[i][3]]) < character_to_integer(text[r[j][3]]):
+            sorted_array.append(r_0[i][3])
+            i += 1
+        elif character_to_integer(text[r_0[i][3] + 1]) > character_to_integer(text[r[j][3] + 1]):
+            sorted_array.append(r[j][3])
+            j += 1
+        elif character_to_integer(text[r_0[i][3] + 1]) < character_to_integer(text[r[j][3] + 1]):
+            sorted_array.append(r_0[i][3])
+            i += 1
+        elif (r_0[i][3] + 1) % 3 > 0 and (r[j][3] + 1) % 3 > 0:
+            if positions[r_0[i][3] + 1] < positions[r[j][3] + 1]:
+                sorted_array.append(r_0[i][3])
+                i += 1
+            else:
+                sorted_array.append(r[j][3])
+                j += 1
+        elif (r_0[i][3] + 2) % 3 > 0 and (r[j][3] + 2) % 3 > 0:
+            if positions[r_0[i][3] + 2] < positions[r[j][3] + 2]:
+                sorted_array.append(r_0[i][3])
+                i += 1
+            else:
+                sorted_array.append(r[j][3])
+                j += 1
+
+    # Append the rest of r_0 if there is any left
+    while i < len(r_0):
+        sorted_array.append(r_0[i][3])
+        i += 1
+
+    # Append the rest of r if there is any left
+    while j < len(r):
+        sorted_array.append(r[j][3])
+        j += 1
+
+    return sorted_array
 
 def bwt(original_text, suffix_array):
     """
@@ -185,7 +303,7 @@ def main():
     sequences = read_file(input_file)
 
     # Assuming there is at least 1 sequence in FASTA file
-    text = sequences[0]
+    text = sequences[1]
 
     # Run K-S Algorithm to generate suffix array
     suffix_array = k_s(text)

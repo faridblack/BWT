@@ -174,10 +174,26 @@ def first_occurrence_factory(first_column):
     return M
 
 
+def bwt_handler(input_str):
+    pass
+
+
+def ibwt_handler(input_str):
+    pass
+
+
+def parse_command(encode_type):
+    if token == '-bwt':
+        return bwt_handler
+    elif token == '-ibwt':
+        return ibwt_handler
+    raise Exception('Command not recognized. Please use -bwt or -bwt')
+
+
 def main():
     if len(sys.argv) < 4:
         exit('3 Arguments required')
-    encode_type = sys.argv[1]
+    encode_type = parse_command(sys.argv[1])
     input_file = sys.argv[2]
     output_file = sys.argv[3]
 

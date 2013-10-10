@@ -24,6 +24,7 @@ def read_file(file_name):
     sequences.append(text)
     return sequences
 
+
 def has_duplicates(strings):
     previous_string = None
 
@@ -33,6 +34,7 @@ def has_duplicates(strings):
         previous_string = string
 
     return False
+
 
 def radix_sort(strings, pos):
     # Base Case for radix sort
@@ -56,6 +58,7 @@ def radix_sort(strings, pos):
 
     return final_sorted
 
+
 def integer_radix_sort(integers, pos):
     final_sorted = []
 
@@ -67,12 +70,13 @@ def integer_radix_sort(integers, pos):
         sorted_values[i] = []
 
     for integer in integers:
-        sorted_values[(integer/(10**(2-pos)))%10].append(integer)
+        sorted_values[(integer / (10**(2 - pos))) % 10].append(integer)
 
     for i in range(10):
         final_sorted += integer_radix_sort(sorted_values[i], pos + 1)
 
     return final_sorted
+
 
 def list_radix_sort(lists, pos, max_value):
     final_sorted = []
@@ -92,6 +96,7 @@ def list_radix_sort(lists, pos, max_value):
 
     return final_sorted
 
+
 def create_new_labels(sorted_array):
     current_value = 0
     current_string = None
@@ -105,6 +110,7 @@ def create_new_labels(sorted_array):
             labels[string] = current_value
     return labels
 
+
 def character_to_integer(character):
     if type(character) is int:
         return character
@@ -114,12 +120,12 @@ def character_to_integer(character):
         return ord(character) - 64
     return ord(character) - 70
 
+
 def k_s(text):
     # Create r_0, r_1, r_2, append '$$$'
     r_0, r_1, r_2 = [], [], []
     text += '$$$'
     positions = {}
-
 
     for i in range(len(text) - 3):
         if i % 3 == 0:
@@ -137,7 +143,7 @@ def k_s(text):
         positions[r[i][3]] = i
 
     sorted_array = []
-    i,j = 0,0 # Positions in r_0, r
+    i, j = 0, 0  # Positions in r_0, r
     while i < len(r_0) and j < len(r):
         '''
         Check which character is larger
@@ -183,6 +189,7 @@ def k_s(text):
         j += 1
 
     return sorted_array
+
 
 def bwt(original_text, suffix_array):
     """

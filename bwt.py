@@ -2,8 +2,8 @@
 """
     bwt.py
     ==============
-    Kevin Tee           22744985
-    Anthony Sutardja    22737353
+    Kevin Tee
+    Anthony Sutardja
 
     10/10/2013
 """

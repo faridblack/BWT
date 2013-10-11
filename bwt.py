@@ -70,37 +70,39 @@ def radix_sort(lists, pos, max_value, n=3, magic=None):
     Returns:
     The list sorted.
     """
-    final_sorted = []
 
-    if pos == n:
-        return lists
+    for idx in range(n):
+        final_sorted = []
+        sorted_values = {}
+        pos = n - 1 - idx
 
-    sorted_values = {}
-
-    for value in lists:
-        # for r0 magic
-        if n == 2:
-            if pos == 0:
+        for value in lists:
+            # for r0 magic
+            if n == 2:
+                if pos == 0:
+                    if value[pos].ch not in sorted_values:
+                        sorted_values[value[pos].ch] = []
+                    sorted_values[value[pos].ch].append(value)
+                else:
+                    if value[pos] not in magic:
+                        if 0 not in sorted_values:
+                            sorted_values[0] = []
+                        sorted_values[0].append(value)
+                    else:
+                        if magic[value[pos]] not in sorted_values:
+                            sorted_values[magic[value[pos]]] = []
+                        sorted_values[magic[value[pos]]].append(value)
+            # for sorting r1+r2
+            else:
                 if value[pos].ch not in sorted_values:
                     sorted_values[value[pos].ch] = []
                 sorted_values[value[pos].ch].append(value)
-            else:
-                if value[pos] not in magic:
-                    if 0 not in sorted_values:
-                        sorted_values[0] = []
-                    sorted_values[0].append(value)
-                else:
-                    if magic[value[pos]] not in sorted_values:
-                        sorted_values[magic[value[pos]]] = []
-                    sorted_values[magic[value[pos]]].append(value)
-        else:
-            if value[pos].ch not in sorted_values:
-                sorted_values[value[pos].ch] = []
-            sorted_values[value[pos].ch].append(value)
 
-    for i in range(max_value + 1):
-        if i in sorted_values:
-            final_sorted += radix_sort(sorted_values[i], pos + 1, max_value, n=n, magic=magic)
+        for i in range(max_value + 1):
+            if i in sorted_values:
+                final_sorted += [v for v in sorted_values[i]]
+
+        lists = final_sorted
 
     return final_sorted
 
@@ -247,7 +249,6 @@ def k_s(text, ch_set_length):
     while i < len(r_0_sorted) and j < len(r_pr_sorted):
         r0_triple = r_0_sorted[i]
         rpr_triple = r_pr_sorted[j]
-        #import ipdb; ipdb.set_trace()
         if r0_triple[0].ch > rpr_triple[0].ch:
             sorted_array.append(rpr_triple[0])
             j += 1

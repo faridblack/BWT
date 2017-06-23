@@ -13,7 +13,7 @@ import sys
 from collections import Counter, namedtuple
 from argparse import ArgumentParser
 
-CHARACTER_SET = '$' + string.uppercase + string.lowercase  # order matters
+CHARACTER_SET = '$' + string.ascii_uppercase + string.ascii_lowercase  # order matters
 
 
 CharPair = namedtuple('CharPair', ['ch', 'idx'])
